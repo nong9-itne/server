@@ -2,9 +2,10 @@ package com.example.nong9server.app.member.service
 
 import com.example.nong9server.app.member.application.MemberService
 import com.example.nong9server.app.member.domain.Member
-import com.example.nong9server.app.member.dto.GenerateTokenRequest
+import com.example.nong9server.app.member.dto.GenerateTokenWithLoginRequest
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
 import com.example.nong9server.common.security.JwtTokenProvider
+import com.example.nong9server.common.security.sha256Encrypt
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -33,11 +34,11 @@ class MemberServiceTest {
     @Test
     fun `로그인으로 토큰을 생성한다`() {
         // given
-        val generateTokenRequest = GenerateTokenRequest(MEMBER_ID, PASSWORD)
-        every { memberRepository.findMemberByMemberId(MEMBER_ID) } returns Member(1L, MEMBER_ID, PASSWORD, "테스터")
+        val generateTokenWithLoginRequest = GenerateTokenWithLoginRequest(MEMBER_ID, PASSWORD)
+        every { memberRepository.findMemberByMemberId(MEMBER_ID) } returns Member(1L, MEMBER_ID, sha256Encrypt(PASSWORD), "테스터")
 
         // when
-        val tokenResponse = memberService.generateTokenWithLogin(generateTokenRequest)
+        val tokenResponse = memberService.generateTokenWithLogin(generateTokenWithLoginRequest)
 
         // then
         val validToken = jwtTokenProvider.isValidToken(tokenResponse.token)

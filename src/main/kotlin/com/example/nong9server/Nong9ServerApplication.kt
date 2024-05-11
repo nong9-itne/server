@@ -1,6 +1,7 @@
 package com.example.nong9server
 
 import com.example.nong9server.app.member.infrastructure.entity.MemberEntity
+import com.example.nong9server.common.security.sha256Encrypt
 import jakarta.annotation.PostConstruct
 import jakarta.persistence.EntityManager
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -43,8 +44,8 @@ class InitService(
             fun init() {
                 val memberEntity = MemberEntity(
                     memberId = "testId",
-                    password = "1q2w3e4r",
-                    username = "테스터"
+                    password = sha256Encrypt("1q2w3e4r"),
+                    memberName = "테스터"
                 )
                 em.persist(memberEntity)
             }

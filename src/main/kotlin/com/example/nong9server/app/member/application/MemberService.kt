@@ -1,6 +1,9 @@
 package com.example.nong9server.app.member.application
 
-import com.example.nong9server.app.member.dto.GenerateTokenRequest
+import com.example.nong9server.app.member.domain.Member
+import com.example.nong9server.app.member.dto.GenerateTokenWithLoginRequest
+import com.example.nong9server.app.member.dto.GenerateTokenWithRegisterRequest
+import com.example.nong9server.app.member.dto.MemberInfoResponse
 import com.example.nong9server.app.member.dto.TokenResponse
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
 import com.example.nong9server.common.security.JwtTokenProvider
@@ -14,14 +17,27 @@ class MemberService(
     private val tokenProvider: JwtTokenProvider,
 ) {
 
-    fun generateTokenWithLogin(generateTokenRequest: GenerateTokenRequest): TokenResponse {
-        val member = memberRepository.findMemberByMemberId(generateTokenRequest.memberId)
+    fun generateTokenWithLogin(generateTokenWithLoginRequest: GenerateTokenWithLoginRequest): TokenResponse {
+        val member = memberRepository.findMemberByMemberId(generateTokenWithLoginRequest.memberId)
 
-        member.authenticate(generateTokenRequest.password)
+        member.authenticate(generateTokenWithLoginRequest.password)
 
-        val token = tokenProvider.createToken(generateTokenRequest.memberId)
+        val token = tokenProvider.createToken(generateTokenWithLoginRequest.memberId)
 
         return TokenResponse(token)
     }
 
+    fun generateTokenWithRegister(generateTokenWithRegisterRequest: GenerateTokenWithRegisterRequest): TokenResponse {
+        val member = Member(
+            memberId = generateTokenWithRegisterRequest.memberId,
+            password = generateTokenWithRegisterRequest.password,
+            memberName = generateTokenWithRegisterRequest.memberName,
+        )
+
+        memberRepository.registerMember(member)
+
+        val token = tokenProvider.createToken(member.memberId)
+
+        return TokenResponse(token)
+    }
 }

@@ -11,6 +11,6 @@ class MemberEntity(
 
     var password: String,
 
-    var username: String,
+    var memberName: String,
 ) : BaseEntity(id) {
 }

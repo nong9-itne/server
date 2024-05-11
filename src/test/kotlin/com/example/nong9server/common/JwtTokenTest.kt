@@ -24,6 +24,9 @@ class JwtTokenTest {
         // then
         val validToken = jwtTokenProvider.isValidToken(token)
         assertThat(validToken).isTrue()
+
+        val subject = jwtTokenProvider.getSubject(token)
+        assertThat(subject).isEqualTo(MEMBER_ID)
     }
 
     @Test

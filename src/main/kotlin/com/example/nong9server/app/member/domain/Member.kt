@@ -10,13 +10,13 @@ class Member(
 
     var password: String,
 
-    var username: String,
+    var memberName: String,
 ) {
     init {
         password = sha256Encrypt(password)
     }
 
-    fun authenticate(verifyPassword: String) = identify(password == sha256Encrypt(verifyPassword)) { "비밀번호가 일치하지 않습니다" }
+    fun authenticate(verifyPassword: String) = identify(password != sha256Encrypt(verifyPassword)) { "비밀번호가 일치하지 않습니다" }
 
     private fun identify(value: Boolean, lazyMessage: () -> Any = {}) {
         if (value) {
