@@ -16,8 +16,8 @@ class MemberRepository(
     private val query: JPAQueryFactory
 ) {
 
-    fun findMemberByMemberId(memberId: String): Member {
-        val memberEntity = memberEntityRepository.findByMemberId(memberId) ?: throw MemberNotFoundException()
+    fun findMemberByMemberId(memberId: String): Member? {
+        val memberEntity = memberEntityRepository.findByMemberId(memberId) ?: return null
 
         return Member(
             id = memberEntity.id,
@@ -28,12 +28,6 @@ class MemberRepository(
     }
 
     fun registerMember(member: Member) {
-        val memberEntity = memberEntityRepository.findByMemberId(member.memberId)
-
-        if (memberEntity != null) {
-            throw DuplicateMemberException()
-        }
-
         MemberEntity(
             memberId = member.memberId,
             password = member.password,

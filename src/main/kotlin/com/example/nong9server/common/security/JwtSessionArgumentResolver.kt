@@ -31,6 +31,6 @@ class JwtSessionArgumentResolver(
 
         val memberId = jwtTokenProvider.getSubject(token)
 
-        return memberRepository.findMemberByMemberId(memberId)
+        return memberRepository.findMemberByMemberId(memberId) ?: throw UnidentifiedMemberException()
     }
 }
