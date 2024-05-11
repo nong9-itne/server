@@ -11,6 +11,16 @@ plugins {
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
+noArg {
+    annotation("jakarta.persistence.Entity")
+}
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.MappedSuperclass")
+    annotation("jakarta.persistence.Embeddable")
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
@@ -27,6 +37,12 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
+
+    // jwt
+    implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 }
 
 tasks.withType<KotlinCompile> {
