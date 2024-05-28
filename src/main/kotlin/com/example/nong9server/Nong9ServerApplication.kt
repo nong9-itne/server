@@ -1,5 +1,6 @@
 package com.example.nong9server
 
+import com.example.nong9server.app.member.domain.MemberRole
 import com.example.nong9server.app.member.infrastructure.entity.MemberEntity
 import com.example.nong9server.common.security.sha256Encrypt
 import jakarta.annotation.PostConstruct
@@ -45,7 +46,8 @@ class InitService(
                 val memberEntity = MemberEntity(
                     memberId = "testId",
                     password = sha256Encrypt("1q2w3e4r"),
-                    memberName = "테스터"
+                    memberName = "테스터",
+                    role = MemberRole.MEMBER
                 )
                 em.persist(memberEntity)
             }

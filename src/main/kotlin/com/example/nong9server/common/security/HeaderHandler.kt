@@ -4,9 +4,10 @@ class HeaderHandler {
 
     companion object {
         private const val BEARER = "Bearer"
+        private const val DELIMITER = " "
 
         fun extractBearerToken(authorization: String): String {
-            val (tokenType, token) = BearerHeader.splitToTokenFormat(authorization)
+            val (tokenType, token) = splitToTokenFormat(authorization)
 
             if (tokenType != BEARER) {
                 throw IllegalAccessException("Bearer 형식의 토큰이 아닙니다")
@@ -14,15 +15,8 @@ class HeaderHandler {
 
             return token
         }
-    }
-}
 
-class BearerHeader {
-    companion object {
-        private const val DELIMITER = " "
-        private const val BEARER = "Bearer "
-
-        fun splitToTokenFormat(authorization: String): Pair<String, String> {
+        private fun splitToTokenFormat(authorization: String): Pair<String, String> {
             return try {
                 val tokenFormat = authorization.split(DELIMITER)
                 tokenFormat[0] to tokenFormat[1]
@@ -30,7 +24,5 @@ class BearerHeader {
                 throw IllegalAccessException()
             }
         }
-
-        fun of(token: String) = BEARER + token
     }
 }

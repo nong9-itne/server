@@ -1,14 +1,15 @@
 package com.example.nong9server.app.member.application
 
 import com.example.nong9server.app.member.domain.Member
+import com.example.nong9server.app.member.domain.MemberRole
 import com.example.nong9server.app.member.dto.GenerateTokenWithLoginRequest
 import com.example.nong9server.app.member.dto.GenerateTokenWithRegisterRequest
-import com.example.nong9server.app.member.dto.MemberInfoResponse
 import com.example.nong9server.app.member.dto.TokenResponse
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
 import com.example.nong9server.common.exception.DuplicateMemberException
 import com.example.nong9server.common.exception.MemberNotFoundException
 import com.example.nong9server.common.security.JwtTokenProvider
+import com.example.nong9server.common.security.sha256Encrypt
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -38,8 +39,9 @@ class MemberService(
 
         val newMember = Member(
             memberId = generateTokenWithRegisterRequest.memberId,
-            password = generateTokenWithRegisterRequest.password,
+            password = sha256Encrypt(generateTokenWithRegisterRequest.password),
             memberName = generateTokenWithRegisterRequest.memberName,
+            role = MemberRole.MEMBER
         )
         memberRepository.registerMember(newMember)
 

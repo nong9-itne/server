@@ -4,7 +4,6 @@ import com.example.nong9server.app.member.domain.Member
 import com.example.nong9server.app.member.dto.MemberInfoResponse
 import com.example.nong9server.app.member.infrastructure.entity.MemberEntity
 import com.example.nong9server.app.member.infrastructure.entity.QMemberEntity
-import com.example.nong9server.common.exception.DuplicateMemberException
 import com.example.nong9server.common.exception.MemberNotFoundException
 import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -24,6 +23,7 @@ class MemberRepository(
             memberId = memberEntity.memberId,
             password = memberEntity.password,
             memberName = memberEntity.memberName,
+            role = memberEntity.role
         )
     }
 
@@ -32,6 +32,7 @@ class MemberRepository(
             memberId = member.memberId,
             password = member.password,
             memberName = member.memberName,
+            role = member.role
         ).run { memberEntityRepository.save(this) }
     }
 

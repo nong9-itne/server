@@ -1,5 +1,6 @@
 package com.example.nong9server.common.security
 
+import com.example.nong9server.app.member.domain.MemberRole
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
 import com.example.nong9server.common.exception.UnidentifiedMemberException
 import org.springframework.core.MethodParameter
@@ -16,7 +17,7 @@ class JwtSessionArgumentResolver(
     private val memberRepository: MemberRepository
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.getParameterAnnotation(MemberClaim::class.java) != null
+        return parameter.getParameterAnnotation(MemberClaim::class.java) != null || parameter.getParameterAnnotation(AdminClaim::class.java) != null
     }
 
     override fun resolveArgument(
@@ -31,6 +32,20 @@ class JwtSessionArgumentResolver(
 
         val memberId = jwtTokenProvider.getSubject(token)
 
-        return memberRepository.findMemberByMemberId(memberId) ?: throw UnidentifiedMemberException()
+        val member = memberRepository.findMemberByMemberId(memberId) ?: throw UnidentifiedMemberException()
+
+        if (parameter.getParameterAnnotation(AdminClaim::class.java) != null && member.role != MemberRole.ADMIN) {
+            throw UnidentifiedMemberException()
+        }
+
+        return member
     }
 }
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class MemberClaim
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class AdminClaim

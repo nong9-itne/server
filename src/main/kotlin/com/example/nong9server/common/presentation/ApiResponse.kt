@@ -1,4 +1,4 @@
-package com.example.nong9server.common.infrastructure
+package com.example.nong9server.common.presentation
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

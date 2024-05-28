@@ -1,14 +1,16 @@
 package com.example.nong9server.common
 
 import com.example.nong9server.common.security.JwtTokenProvider
+import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class JwtTokenTest {
+    @MockK
     private lateinit var jwtTokenProvider: JwtTokenProvider
 
     @BeforeEach

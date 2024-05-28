@@ -1,6 +1,6 @@
 package com.example.nong9server.common.exception
 
-import com.example.nong9server.common.infrastructure.responseEntity
+import com.example.nong9server.common.presentation.responseEntity
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

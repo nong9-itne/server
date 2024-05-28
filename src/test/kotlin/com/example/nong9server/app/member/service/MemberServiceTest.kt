@@ -2,6 +2,7 @@ package com.example.nong9server.app.member.service
 
 import com.example.nong9server.app.member.application.MemberService
 import com.example.nong9server.app.member.domain.Member
+import com.example.nong9server.app.member.domain.MemberRole
 import com.example.nong9server.app.member.dto.GenerateTokenWithLoginRequest
 import com.example.nong9server.app.member.dto.GenerateTokenWithRegisterRequest
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
@@ -40,7 +41,7 @@ class MemberServiceTest {
     fun `로그인으로 토큰을 생성한다`() {
         // given
         val generateTokenWithLoginRequest = GenerateTokenWithLoginRequest(MEMBER_ID, PASSWORD)
-        every { memberRepository.findMemberByMemberId(MEMBER_ID) } returns Member(1L, MEMBER_ID, sha256Encrypt(PASSWORD), "테스터")
+        every { memberRepository.findMemberByMemberId(MEMBER_ID) } returns Member(1L, MEMBER_ID, sha256Encrypt(PASSWORD), "테스터", MemberRole.MEMBER)
 
         // when
         val tokenResponse = memberService.generateTokenWithLogin(generateTokenWithLoginRequest)
@@ -69,7 +70,7 @@ class MemberServiceTest {
     fun `중복된 아이디로 회원 가입하여 실패한다`() {
         // given
         val generateTokenWithLoginRequest = GenerateTokenWithRegisterRequest(MEMBER_ID, PASSWORD, "")
-        every { memberRepository.findMemberByMemberId(MEMBER_ID) } returns Member(1L, MEMBER_ID, sha256Encrypt(PASSWORD), "테스터")
+        every { memberRepository.findMemberByMemberId(MEMBER_ID) } returns Member(1L, MEMBER_ID, sha256Encrypt(PASSWORD), "테스터", MemberRole.MEMBER)
 
         // when
         // then

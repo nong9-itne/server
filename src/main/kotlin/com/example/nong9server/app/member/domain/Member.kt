@@ -11,12 +11,11 @@ class Member(
     var password: String,
 
     var memberName: String,
-) {
-    init {
-        password = sha256Encrypt(password)
-    }
 
-    fun authenticate(verifyPassword: String) = identify(password != sha256Encrypt(verifyPassword)) { "비밀번호가 일치하지 않습니다" }
+    val role: MemberRole
+) {
+
+    fun authenticate(verifyPassword: String) = identify(password == sha256Encrypt(verifyPassword)) { "비밀번호가 일치하지 않습니다" }
 
     private fun identify(value: Boolean, lazyMessage: () -> Any = {}) {
         if (value) {
@@ -24,5 +23,9 @@ class Member(
         }
 
         throw UnidentifiedMemberException(lazyMessage().toString())
+    }
+
+    override fun toString(): String {
+        return "Member(id=$id, memberId='$memberId', password='$password', memberName='$memberName', role=$role)"
     }
 }

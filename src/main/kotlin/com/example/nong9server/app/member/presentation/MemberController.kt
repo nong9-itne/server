@@ -6,13 +6,13 @@ import com.example.nong9server.app.member.dto.GenerateTokenWithLoginRequest
 import com.example.nong9server.app.member.dto.GenerateTokenWithRegisterRequest
 import com.example.nong9server.app.member.dto.MemberInfoResponse
 import com.example.nong9server.app.member.dto.TokenResponse
-import com.example.nong9server.common.infrastructure.responseEntity
+import com.example.nong9server.common.presentation.responseEntity
 import com.example.nong9server.common.security.MemberClaim
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/member")
 class MemberController(
     private val memberService: MemberService
 ) {
