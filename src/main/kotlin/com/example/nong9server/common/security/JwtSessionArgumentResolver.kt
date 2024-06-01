@@ -1,6 +1,6 @@
 package com.example.nong9server.common.security
 
-import com.example.nong9server.app.member.domain.MemberRole
+import com.example.nong9server.app.member.consts.MemberRole
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
 import com.example.nong9server.common.exception.UnidentifiedMemberException
 import org.springframework.core.MethodParameter
@@ -32,7 +32,7 @@ class JwtSessionArgumentResolver(
 
         val memberId = jwtTokenProvider.getSubject(token)
 
-        val member = memberRepository.findMemberByMemberId(memberId) ?: throw UnidentifiedMemberException()
+        val member = memberRepository.findMemberByAccountId(memberId) ?: throw UnidentifiedMemberException()
 
         if (parameter.getParameterAnnotation(AdminClaim::class.java) != null && member.role != MemberRole.ADMIN) {
             throw UnidentifiedMemberException()

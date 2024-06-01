@@ -1,6 +1,6 @@
 package com.example.nong9server.app.member.infrastructure.entity
 
-import com.example.nong9server.app.member.domain.MemberRole
+import com.example.nong9server.app.member.consts.MemberRole
 import com.example.nong9server.common.infrastructure.BaseEntity
 import jakarta.persistence.Entity
 
@@ -8,7 +8,7 @@ import jakarta.persistence.Entity
 class MemberEntity(
     id: Long = 0L,
 
-    val memberId: String,
+    val accountId: String,
 
     var password: String,
 

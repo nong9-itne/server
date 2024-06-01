@@ -1,12 +1,13 @@
 package com.example.nong9server.app.member.domain
 
+import com.example.nong9server.app.member.consts.MemberRole
 import com.example.nong9server.common.exception.UnidentifiedMemberException
 import com.example.nong9server.common.security.sha256Encrypt
 
 class Member(
     val id: Long = 0L,
 
-    val memberId: String,
+    val accountId: String,
 
     var password: String,
 
@@ -24,8 +25,6 @@ class Member(
 
         throw UnidentifiedMemberException(lazyMessage().toString())
     }
-
-    override fun toString(): String {
-        return "Member(id=$id, memberId='$memberId', password='$password', memberName='$memberName', role=$role)"
-    }
 }
+
+

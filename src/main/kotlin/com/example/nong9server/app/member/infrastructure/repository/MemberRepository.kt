@@ -7,6 +7,7 @@ import com.example.nong9server.app.member.infrastructure.entity.QMemberEntity
 import com.example.nong9server.common.exception.MemberNotFoundException
 import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -14,13 +15,24 @@ class MemberRepository(
     private val memberEntityRepository: MemberEntityRepository,
     private val query: JPAQueryFactory
 ) {
-
-    fun findMemberByMemberId(memberId: String): Member? {
-        val memberEntity = memberEntityRepository.findByMemberId(memberId) ?: return null
+    fun findById(id: Long): Member? {
+        val memberEntity = memberEntityRepository.findByIdOrNull(id) ?: return null
 
         return Member(
             id = memberEntity.id,
-            memberId = memberEntity.memberId,
+            accountId = memberEntity.accountId,
+            password = memberEntity.password,
+            memberName = memberEntity.memberName,
+            role = memberEntity.role
+        )
+    }
+
+    fun findMemberByAccountId(memberId: String): Member? {
+        val memberEntity = memberEntityRepository.findByAccountId(memberId) ?: return null
+
+        return Member(
+            id = memberEntity.id,
+            accountId = memberEntity.accountId,
             password = memberEntity.password,
             memberName = memberEntity.memberName,
             role = memberEntity.role
@@ -29,7 +41,7 @@ class MemberRepository(
 
     fun registerMember(member: Member) {
         MemberEntity(
-            memberId = member.memberId,
+            accountId = member.accountId,
             password = member.password,
             memberName = member.memberName,
             role = member.role
@@ -42,12 +54,12 @@ class MemberRepository(
         return query.select(
             Projections.constructor(
                 MemberInfoResponse::class.java,
-                qMemberEntity.memberId,
+                qMemberEntity.accountId,
                 qMemberEntity.memberName
             )
         )
             .from(qMemberEntity)
-            .where(qMemberEntity.memberId.eq(memberId))
+            .where(qMemberEntity.accountId.eq(memberId))
             .fetchOne() ?: throw MemberNotFoundException()
     }
 }

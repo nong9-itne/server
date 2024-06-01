@@ -38,7 +38,7 @@ class MemberController(
     @GetMapping("/me")
     fun findMemberInfo(@MemberClaim member: Member): ResponseEntity<MemberInfoResponse> {
         val memberInfoResponse = MemberInfoResponse(
-            memberId = member.memberId,
+            memberId = member.accountId,
             memberName = member.memberName
         )
 

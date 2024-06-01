@@ -1,7 +1,7 @@
 package com.example.nong9server.app.member.application
 
+import com.example.nong9server.app.member.consts.MemberRole
 import com.example.nong9server.app.member.domain.Member
-import com.example.nong9server.app.member.domain.MemberRole
 import com.example.nong9server.app.member.dto.GenerateTokenWithLoginRequest
 import com.example.nong9server.app.member.dto.GenerateTokenWithRegisterRequest
 import com.example.nong9server.app.member.dto.TokenResponse
@@ -21,32 +21,38 @@ class MemberService(
 ) {
 
     fun generateTokenWithLogin(generateTokenWithLoginRequest: GenerateTokenWithLoginRequest): TokenResponse {
-        val member = memberRepository.findMemberByMemberId(generateTokenWithLoginRequest.memberId) ?: throw MemberNotFoundException()
+        val member = memberRepository.findMemberByAccountId(generateTokenWithLoginRequest.memberId) ?: throw MemberNotFoundException()
 
         member.authenticate(generateTokenWithLoginRequest.password)
 
-        val token = tokenProvider.createToken(member.memberId)
+        val token = tokenProvider.createToken(member.accountId)
 
         return TokenResponse(token)
     }
 
     fun generateTokenWithRegister(generateTokenWithRegisterRequest: GenerateTokenWithRegisterRequest): TokenResponse {
-        val member = memberRepository.findMemberByMemberId(generateTokenWithRegisterRequest.memberId)
+        val member = memberRepository.findMemberByAccountId(generateTokenWithRegisterRequest.memberId)
 
         if (member != null) {
             throw DuplicateMemberException()
         }
 
         val newMember = Member(
-            memberId = generateTokenWithRegisterRequest.memberId,
+            accountId = generateTokenWithRegisterRequest.memberId,
             password = sha256Encrypt(generateTokenWithRegisterRequest.password),
             memberName = generateTokenWithRegisterRequest.memberName,
             role = MemberRole.MEMBER
         )
         memberRepository.registerMember(newMember)
 
-        val token = tokenProvider.createToken(newMember.memberId)
+        val token = tokenProvider.createToken(newMember.accountId)
 
         return TokenResponse(token)
+    }
+
+    fun checkMemberExist(id: Long): Boolean {
+        memberRepository.findById(id) ?: return false
+
+        return true
     }
 }
