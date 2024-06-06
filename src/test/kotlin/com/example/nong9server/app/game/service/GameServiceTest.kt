@@ -1,11 +1,7 @@
 package com.example.nong9server.app.game.service
 
 import com.example.nong9server.app.game.application.GameService
-import com.example.nong9server.app.game.consts.PlayerStatus
-import com.example.nong9server.app.game.dto.PlayerRequest
-import com.example.nong9server.app.game.dto.StartGameRequest
-import com.example.nong9server.app.game.dto.TeamRequest
-import com.example.nong9server.app.game.dto.UmpireRequest
+import com.example.nong9server.app.game.fixture.*
 import com.example.nong9server.app.game.infrastructure.repository.GameRepository
 import com.example.nong9server.app.member.application.MemberService
 import com.example.nong9server.common.exception.MemberNotFoundException
@@ -18,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 class GameServiceTest {
@@ -41,7 +36,8 @@ class GameServiceTest {
         // given
         every { gameRepository.registerGame(any()) } just Runs
         every { memberService.checkMemberExist(any()) } returns true
-        val startGameRequest = VALID_START_GAME_REQUEST
+
+        val startGameRequest = aStartGameRequest()
 
         // when
         // then
@@ -53,8 +49,17 @@ class GameServiceTest {
         // given
         every { gameRepository.registerGame(any()) } just Runs
         every { memberService.checkMemberExist(any()) } returns true
-        every { memberService.checkMemberExist(4L) } returns false
-        val startGameRequest = VALID_START_GAME_REQUEST
+        every { memberService.checkMemberExist(playerId1) } returns false
+
+        val startGameRequest = aStartGameRequest(
+            team1 = aTeamRequest(
+                players = listOf(
+                    aPlayerRequest(
+                        memberId = playerId1
+                    )
+                )
+            )
+        )
 
         // when
         // then
@@ -68,8 +73,15 @@ class GameServiceTest {
         // given
         every { gameRepository.registerGame(any()) } just Runs
         every { memberService.checkMemberExist(any()) } returns true
-        every { memberService.checkMemberExist(1L) } returns false
-        val startGameRequest = VALID_START_GAME_REQUEST
+        every { memberService.checkMemberExist(judgeId1) } returns false
+
+        val startGameRequest = aStartGameRequest(
+            judges = mutableListOf(
+                aJudgeRequest(
+                    memberId = judgeId1
+                )
+            )
+        )
 
         // when
         // then
@@ -78,68 +90,15 @@ class GameServiceTest {
         }
     }
 
-    companion object {
-        private val VALID_START_GAME_REQUEST = StartGameRequest(
-            competition = "competition",
-            gameNumber = 1,
-            gameDateTime = LocalDateTime.now(),
-            umpire1 = UmpireRequest(
-                memberId = 1L,
-                name = "심판1"
-            ),
-            umpire2 = UmpireRequest(
-                memberId = 0L,
-                name = "심판2"
-            ),
-            team1 = TeamRequest(
-                teamId = 1L,
-                name = "team 1",
-                players = listOf(
-                    PlayerRequest(
-                        memberId = 3L,
-                        name = "player 1",
-                        number = 3,
-                        status = PlayerStatus.STARTING
-                    ),
-                    PlayerRequest(
-                        memberId = 4L,
-                        name = "player 2",
-                        number = 4,
-                        status = PlayerStatus.STARTING
-                    )
-                    ,
-                    PlayerRequest(
-                        memberId = 0L,
-                        name = "player 3",
-                        number = 14,
-                        status = PlayerStatus.STARTING
-                    )
-                )
-            ),
-            team2 = TeamRequest(
-                teamId = 0L,
-                name = "team 2",
-                players = listOf(
-                    PlayerRequest(
-                        memberId = 0L,
-                        name = "player 4",
-                        number = 5,
-                        status = PlayerStatus.STARTING
-                    ),
-                    PlayerRequest(
-                        memberId = 0L,
-                        name = "player 5",
-                        number = 4,
-                        status = PlayerStatus.STARTING
-                    ),
-                    PlayerRequest(
-                        memberId = 0L,
-                        name = "player 6",
-                        number = 11,
-                        status = PlayerStatus.STARTING
-                    )
-                )
-            )
-        )
+    @Test
+    fun `시작한 게임에 기록을 추가한다`() {
+        // given
+        every { gameRepository.loadGame(1L) } returns aGame()
+        every { memberService.checkMemberExist(any()) } returns true
+        every { gameRepository.updateGame(any()) } just Runs
+
+        // when
+        // then
+        gameService.recordGameEvent(aRegisterGameEventRequest())
     }
 }

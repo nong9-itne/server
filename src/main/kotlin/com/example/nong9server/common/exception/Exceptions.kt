@@ -15,3 +15,11 @@ class MemberNotFoundException(
 class DuplicateMemberException(
     override val message: String = "이미 존재하는 사용자 정보입니다",
 ) : RuntimeException(message)
+
+class GameNotFoundException(
+    override val message: String = "게임 정보가 존재하지 않습니다",
+) : RuntimeException(message)
+
+class GameConsistencyException(
+    override val message: String = "게임 정보가 유효하지 않습니다",
+) : RuntimeException(message)

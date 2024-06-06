@@ -9,4 +9,12 @@ class GameRepository {
     fun registerGame(game: Game) {
 
     }
+
+    fun loadGame(id: Long): Game? {
+        return null
+    }
+
+    fun updateGame(game: Game) {
+
+    }
 }

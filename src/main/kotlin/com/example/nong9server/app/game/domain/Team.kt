@@ -5,7 +5,7 @@ import com.example.nong9server.app.game.consts.GameEventType
 class Team(
     val teamId: Long,
     val name: String,
-    val players: List<Player>,
+    val players: MutableList<Player>,
     var score: Int = 0,
     var foulCount: Int = 0
 ) {
@@ -16,4 +16,7 @@ class Team(
             GameEventType.FOUL -> foulCount += gameEvent.point
         }
     }
+
+    fun checkPlayerExist(playerId: Long): Boolean = players.map { it.memberId }.contains(playerId)
+
 }
