@@ -7,17 +7,16 @@ import com.example.nong9server.app.game.infrastructure.repository.GameRepository
 import com.example.nong9server.app.member.application.MemberService
 import com.example.nong9server.common.exception.GameNotFoundException
 import com.example.nong9server.common.exception.MemberNotFoundException
+import com.example.nong9server.common.infrastructure.Tx
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class GameService(
     private val gameRepository: GameRepository,
     private val memberService: MemberService
 ) {
 
-    fun startGame(startGameRequest: StartGameRequest) {
+    fun startGame(startGameRequest: StartGameRequest): Unit = Tx.writable {
         val game = toDomain(startGameRequest)
 
         game.judges.forEach { checkMemberExists(it.memberId) }
@@ -26,7 +25,8 @@ class GameService(
         gameRepository.registerGame(game)
     }
 
-    fun recordGameEvent(registerGameEventRequest: RegisterGameEventRequest) {
+
+    fun recordGameEvent(registerGameEventRequest: RegisterGameEventRequest): Unit = Tx.writable {
         val game = gameRepository.loadGame(registerGameEventRequest.gameId) ?: throw GameNotFoundException()
         registerGameEventRequest.gameEvents
             .map {
@@ -48,7 +48,7 @@ class GameService(
         gameRepository.updateGame(game)
     }
 
-    fun finishGame() {
+    fun finishGame(): Unit = Tx.writable {
 
     }
 

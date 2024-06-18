@@ -8,29 +8,28 @@ import com.example.nong9server.app.member.dto.TokenResponse
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
 import com.example.nong9server.common.exception.DuplicateMemberException
 import com.example.nong9server.common.exception.MemberNotFoundException
+import com.example.nong9server.common.infrastructure.Tx
 import com.example.nong9server.common.security.JwtTokenProvider
 import com.example.nong9server.common.security.sha256Encrypt
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class MemberService(
     private val memberRepository: MemberRepository,
     private val tokenProvider: JwtTokenProvider,
 ) {
 
-    fun generateTokenWithLogin(generateTokenWithLoginRequest: GenerateTokenWithLoginRequest): TokenResponse {
+    fun generateTokenWithLogin(generateTokenWithLoginRequest: GenerateTokenWithLoginRequest): TokenResponse = Tx.readable {
         val member = memberRepository.findMemberByAccountId(generateTokenWithLoginRequest.memberId) ?: throw MemberNotFoundException()
 
         member.authenticate(generateTokenWithLoginRequest.password)
 
         val token = tokenProvider.createToken(member.accountId)
 
-        return TokenResponse(token)
+        return@readable TokenResponse(token)
     }
 
-    fun generateTokenWithRegister(generateTokenWithRegisterRequest: GenerateTokenWithRegisterRequest): TokenResponse {
+    fun generateTokenWithRegister(generateTokenWithRegisterRequest: GenerateTokenWithRegisterRequest): TokenResponse = Tx.writable {
         val member = memberRepository.findMemberByAccountId(generateTokenWithRegisterRequest.memberId)
 
         if (member != null) {
@@ -47,12 +46,12 @@ class MemberService(
 
         val token = tokenProvider.createToken(newMember.accountId)
 
-        return TokenResponse(token)
+        return@writable TokenResponse(token)
     }
 
-    fun checkMemberExist(id: Long): Boolean {
-        memberRepository.findById(id) ?: return false
+    fun checkMemberExist(id: Long): Boolean = Tx.readable {
+        memberRepository.findById(id) ?: return@readable false
 
-        return true
+        return@readable true
     }
 }

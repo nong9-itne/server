@@ -7,6 +7,7 @@ import com.example.nong9server.app.member.dto.GenerateTokenWithLoginRequest
 import com.example.nong9server.app.member.dto.GenerateTokenWithRegisterRequest
 import com.example.nong9server.app.member.infrastructure.repository.MemberRepository
 import com.example.nong9server.common.exception.DuplicateMemberException
+import com.example.nong9server.common.infrastructure.Tx
 import com.example.nong9server.common.security.JwtTokenProvider
 import com.example.nong9server.common.security.sha256Encrypt
 import io.mockk.Runs
@@ -19,7 +20,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.boot.test.context.SpringBootTest
 
+@SpringBootTest(classes = [Tx::class])
 @ExtendWith(MockKExtension::class)
 class MemberServiceTest {
     @MockK
@@ -75,7 +78,7 @@ class MemberServiceTest {
         // when
         // then
         assertThrows<DuplicateMemberException> {
-            val tokenResponse = memberService.generateTokenWithRegister(generateTokenWithLoginRequest)
+            memberService.generateTokenWithRegister(generateTokenWithLoginRequest)
         }
     }
 
