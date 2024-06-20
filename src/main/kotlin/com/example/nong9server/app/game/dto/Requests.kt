@@ -33,7 +33,7 @@ data class PlayerRequest(
     val status: PlayerStatus,
 )
 
-data class RegisterGameEventRequest(
+data class RecordGameEventRequest(
     val gameId: Long,
     val gameEvents: List<GameEventRequest>
 )

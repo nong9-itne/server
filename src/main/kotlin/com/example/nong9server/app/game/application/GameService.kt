@@ -1,7 +1,7 @@
 package com.example.nong9server.app.game.application
 
 import com.example.nong9server.app.game.domain.*
-import com.example.nong9server.app.game.dto.RegisterGameEventRequest
+import com.example.nong9server.app.game.dto.RecordGameEventRequest
 import com.example.nong9server.app.game.dto.StartGameRequest
 import com.example.nong9server.app.game.infrastructure.repository.GameRepository
 import com.example.nong9server.app.member.application.MemberService
@@ -16,19 +16,21 @@ class GameService(
     private val memberService: MemberService
 ) {
 
-    fun startGame(startGameRequest: StartGameRequest): Unit = Tx.writable {
+    fun startGame(startGameRequest: StartGameRequest): Long = Tx.writable {
         val game = toDomain(startGameRequest)
 
         game.judges.forEach { checkMemberExists(it.memberId) }
         (game.team1.players + game.team2.players).forEach { checkMemberExists(it.memberId) }
 
         gameRepository.registerGame(game)
+
+        return@writable game.id
     }
 
 
-    fun recordGameEvent(registerGameEventRequest: RegisterGameEventRequest): Unit = Tx.writable {
-        val game = gameRepository.loadGame(registerGameEventRequest.gameId) ?: throw GameNotFoundException()
-        registerGameEventRequest.gameEvents
+    fun recordGameEvent(recordGameEventRequest: RecordGameEventRequest): Long = Tx.writable {
+        val game = gameRepository.loadGame(recordGameEventRequest.gameId) ?: throw GameNotFoundException()
+        recordGameEventRequest.gameEvents
             .map {
                 GameEvent(
                     id = 0L,
@@ -46,6 +48,8 @@ class GameService(
             }
 
         gameRepository.updateGame(game)
+
+        return@writable game.id
     }
 
     fun finishGame(): Unit = Tx.writable {
@@ -81,6 +85,7 @@ class GameService(
                 players = players.map { Player(it.memberId, it.name, it.number, it.status) }.toMutableList()
             )
         },
+        currentQuarter = 1,
         gameEvents = mutableListOf()
     )
 }

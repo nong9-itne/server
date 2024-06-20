@@ -71,7 +71,7 @@ fun aJudgeRequest(
 fun aRegisterGameEventRequest(
     gameId: Long = 1L,
     gameEvents: List<GameEventRequest> = listOf(aGameEventRequest())
-) = RegisterGameEventRequest(
+) = RecordGameEventRequest(
     gameId = gameId,
     gameEvents = gameEvents
 )

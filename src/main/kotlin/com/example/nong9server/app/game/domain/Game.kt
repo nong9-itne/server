@@ -11,10 +11,13 @@ class Game(
     val judges: MutableList<Judge>,
     val team1: Team,
     val team2: Team,
+    var currentQuarter: Int,
     val gameEvents: MutableList<GameEvent>
 ) {
 
     fun acceptEvent(newGameEvent: GameEvent) {
+        check(newGameEvent.quarter == currentQuarter) { throw GameConsistencyException() }
+
         if (newGameEvent.teamId == team1.teamId) {
             check(team1.checkPlayerExist(newGameEvent.playerId)) { throw GameConsistencyException() }
             team1.acceptEvent(newGameEvent)

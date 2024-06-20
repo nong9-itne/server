@@ -13,3 +13,6 @@ const val teamId2 = 2L
 const val point1 = 1
 const val point2 = 2
 const val point3 = 3
+
+const val quarter1 = 1
+const val quarter2 = 2

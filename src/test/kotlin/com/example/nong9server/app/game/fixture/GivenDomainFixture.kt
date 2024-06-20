@@ -27,6 +27,7 @@ fun aGame(
             )
         ),
     ),
+    currentQuarter: Int = quarter1,
     gameEvents: MutableList<GameEvent> = mutableListOf()
 ) = Game(
     id = id,
@@ -36,6 +37,7 @@ fun aGame(
     judges = judges,
     team1 = team1,
     team2 = team2,
+    currentQuarter = currentQuarter,
     gameEvents = gameEvents
 )
 

@@ -4,6 +4,7 @@ import com.example.nong9server.app.game.application.GameService
 import com.example.nong9server.app.game.fixture.*
 import com.example.nong9server.app.game.infrastructure.repository.GameRepository
 import com.example.nong9server.app.member.application.MemberService
+import com.example.nong9server.common.exception.GameConsistencyException
 import com.example.nong9server.common.exception.MemberNotFoundException
 import com.example.nong9server.common.infrastructure.Tx
 import io.mockk.Runs
@@ -103,5 +104,26 @@ class GameServiceTest {
         // when
         // then
         gameService.recordGameEvent(aRegisterGameEventRequest())
+    }
+
+    @Test
+    fun `유효한 쿼터를 지정하지 않으면 기록 추가에 실패한다`() {
+        // given
+        every { gameRepository.loadGame(1L) } returns aGame(currentQuarter = quarter1)
+        every { memberService.checkMemberExist(any()) } returns true
+        every { gameRepository.updateGame(any()) } just Runs
+        val recordGameEventRequest = aRegisterGameEventRequest(
+            gameEvents = listOf(
+                aGameEventRequest(
+                    quarter = quarter2
+                )
+            )
+        )
+
+        // when
+        // then
+        assertThrows<GameConsistencyException> {
+            gameService.recordGameEvent(recordGameEventRequest)
+        }
     }
 }
